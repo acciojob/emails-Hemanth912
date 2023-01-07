@@ -1,20 +1,13 @@
 package com.driver;
 
-import org.apache.commons.lang3.tuple.Triple;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import org.apache.commons.lang3.tuple.Triple;
 import java.util.Date;
 
 public class Gmail extends Email {
 
-    int inboxCapacity; //maximum number of mails inbox can store
-//    private ArrayList<ArrayList<ArrayList<Date, String, String>>> Inbox;
-//    private ArrayList<Triple<Date, String, String>> Trash;
-    //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
-    //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
-
-    private ArrayList<Triple<Date, String,String>> Inbox;
+    int inboxCapacity;
+    private ArrayList<Triple<Date, String, String>> Inbox; //triple of date (Date), sender (String), message (String)
     private ArrayList<Triple<Date, String, String>> Trash;
     public Gmail(String emailId, int inboxCapacity) {
         super(emailId);
@@ -24,74 +17,80 @@ public class Gmail extends Email {
     }
 
     public void receiveMail(Date date, String sender, String message){
-        if(this.Inbox.size() == this.inboxCapacity){
-//            mail = this.Inbox.get(0);
-            Triple<Date,String,String> oldest = Inbox.get(0);
-            this.Inbox.remove(0);
-            this.Trash.add(oldest);
+        // If the inbox is full, move the oldest mail in the inbox to trash and add the new mail to inbox.
+        // It is guaranteed that:
+        // 1. Each mail in the inbox is distinct.
+        // 2. The mails are received in non-decreasing order. This means that the date of a new mail is greater than equal to the dates of mails received already.
+        if(Inbox.size() == inboxCapacity){
+            Triple<Date, String, String> oldestMail = Inbox.get(0);
+            Inbox.remove(0);
+            Trash.add(oldestMail);
         }
-        Triple<Date,String,String> mail = Triple.of(date, sender, message);
-        this.Inbox.add(mail);
+        Triple<Date, String, String> mail = Triple.of(date, sender, message);
+        Inbox.add(mail);
     }
 
     public void deleteMail(String message){
-        int idx = -1;
-
-        for(int i = 0; i < this.Inbox.size(); i++){
-            if(message.equals(this.Inbox.get(i).getRight())){
-                idx = i;
+        // Each message is distinct
+        // If the given message is found in the inbox, move the mail to trash, else do nothing
+        int index = -1;
+        for(int i = 0; i<Inbox.size(); i++){
+            if(message.equals(Inbox.get(i).getRight())){
+                index = i;
                 break;
             }
         }
-        if(idx != -1){
-            this.Trash.add(this.Inbox.get(idx));
-            this.Inbox.remove(idx);
+
+        if(index != -1){
+            Trash.add(Inbox.get(index));
+            Inbox.remove(index);
         }
     }
 
     public String findLatestMessage(){
-
-        if(this.Inbox.isEmpty()){
+        // If the inbox is empty, return null
+        // Else, return the latest message present in the inbox
+        if(Inbox.isEmpty())
             return null;
-        }
-        else {
-            return this.Inbox.get(this.Inbox.size() - 1).getRight();
-        }
+        return Inbox.get(Inbox.size()-1).getRight();
     }
 
     public String findOldestMessage(){
-
-        if(this.Inbox.isEmpty()){
+        // If the inbox is empty, return null
+        // Else, return the oldest message present in the inbox
+        if(Inbox.isEmpty())
             return null;
-        }
-        else {
-            return this.Inbox.get(0).getRight();
-        }
+        return Inbox.get(0).getRight();
     }
 
     public int findMailsBetweenDates(Date start, Date end){
-        int count = 0;
-        for(int i = 0; i < this.Inbox.size(); i++){
-            if(this.Inbox.get(i).getLeft().compareTo(start) >=0 && this.Inbox.get(i).getLeft().compareTo(end) <= 0){
-                count++;
+        //find number of emails between given dates
+        //It is guaranteed that start date <= end date
+        int cnt = 0;
+        for(int i = 0; i<Inbox.size(); i++){
+            if((Inbox.get(i).getLeft().compareTo(start) >= 0) && (Inbox.get(i).getLeft().compareTo(end) <= 0)){
+                cnt += 1;
             }
         }
-        return count;
+        return cnt;
     }
 
     public int getInboxSize(){
-        return this.Inbox.size();
+        // Return number of mails in inbox
+        return Inbox.size();
     }
 
     public int getTrashSize(){
-        return this.Trash.size();
+        // Return number of mails in Trash
+        return Trash.size();
     }
 
     public void emptyTrash(){
-        this.Trash.clear();
+        // clear all mails in the trash
+        Trash.clear();
     }
 
     public int getInboxCapacity() {
-        return this.inboxCapacity;
+        return inboxCapacity;
     }
 }
