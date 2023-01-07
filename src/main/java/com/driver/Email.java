@@ -40,17 +40,17 @@ public class Email {
             }
     }
 
-    private boolean isValid(String Password)
+    private boolean isValid(String password)
     {
         Boolean capital=false;
         Boolean small=false;
         Boolean digit=false;
         Boolean special=false;
 
-        if(Password.length()<8)
+        if(password.length()<8)
             return false;
 
-        for(int i=0;i<Password.length();i++)
+        for(int i=0;i<password.length();i++)
         {
             char ch = password.charAt(i);
             if((ch>='A') && (ch<='Z'))
