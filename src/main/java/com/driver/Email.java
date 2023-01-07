@@ -25,18 +25,44 @@ public class Email {
         // 3. It contains at least one lowercase letter
         // 4. It contains at least one digit
         // 5. It contains at least one special character. Any character apart from alphabets and digits is a special character
-
-        String SPECIAL_CHARACTERS = "!,#,$,%,^,&,*,|,@";
-
-        if (this.password.equals(oldPassword)  && password.length() >= 8)
-        {
-            for (int i = 0; i < password.length() - 1; i++)
+            if(oldPassword.equals(password))
             {
-                if (Character.isUpperCase(password.charAt(i)) && Character.isLowerCase(password.charAt(i)) && Character.isDigit(password.charAt(i)) && SPECIAL_CHARACTERS.contains(password))
+                if(isValid(password))
                 {
-                    this.password = newPassword;
+                    System.out.println("Password changes successfully!");
+                    this.password=newPassword;
                 }
+                else
+                    System.out.println("The new password is not valid!");
             }
+            else {
+                System.out.println("The given password does not match current password!");
+            }
+    }
+
+    private boolean isValid(String Password)
+    {
+        Boolean capital=false;
+        Boolean small=false;
+        Boolean digit=false;
+        Boolean special=false;
+
+        if(Password.length()<8)
+            return false;
+
+        for(int i=0;i<Password.length();i++)
+        {
+            char ch = password.charAt(i);
+            if((ch>='A') && (ch<='Z'))
+                capital=true;
+            else if((ch>='a') && (ch<='z'))
+                small=true;
+            else if((ch>='0') && (ch<='9'))
+                digit=true;
+            else special=true;
         }
+        if(capital && small && digit && special)
+            return true;
+        return false;
     }
 }

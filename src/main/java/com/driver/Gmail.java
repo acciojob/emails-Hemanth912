@@ -14,8 +14,8 @@ public class Gmail extends Email {
     //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
 
-    private ArrayList<Mail> Inbox;
-    private ArrayList<Mail> Trash;
+    private ArrayList<Triple<Date, String,String>> Inbox;
+    private ArrayList<Triple<Date, String, String>> Trash;
     public Gmail(String emailId, int inboxCapacity) {
         super(emailId);
         this.inboxCapacity = inboxCapacity;
@@ -24,13 +24,13 @@ public class Gmail extends Email {
     }
 
     public void receiveMail(Date date, String sender, String message){
-        Mail mail;
         if(this.Inbox.size() == this.inboxCapacity){
 //            mail = this.Inbox.get(0);
-            this.Trash.add(this.Inbox.get(0));
+            Triple<Date,String,String> oldest = Inbox.get(0);
             this.Inbox.remove(0);
+            this.Trash.add(oldest);
         }
-        mail = new Mail(date, sender, message);
+        Triple<Date,String,String> mail = Triple.of(date, sender, message);
         this.Inbox.add(mail);
     }
 
@@ -38,7 +38,7 @@ public class Gmail extends Email {
         int idx = -1;
 
         for(int i = 0; i < this.Inbox.size(); i++){
-            if(message.equals(this.Inbox.get(i).messageData)){
+            if(message.equals(this.Inbox.get(i).getRight())){
                 idx = i;
                 break;
             }
@@ -55,7 +55,7 @@ public class Gmail extends Email {
             return null;
         }
         else {
-            return this.Inbox.get(this.Inbox.size() - 1).messageData;
+            return this.Inbox.get(this.Inbox.size() - 1).getRight();
         }
     }
 
@@ -65,14 +65,14 @@ public class Gmail extends Email {
             return null;
         }
         else {
-            return this.Inbox.get(0).messageData;
+            return this.Inbox.get(0).getRight();
         }
     }
 
     public int findMailsBetweenDates(Date start, Date end){
         int count = 0;
         for(int i = 0; i < this.Inbox.size(); i++){
-            if(this.Inbox.get(i).date.compareTo(start) >=0 && this.Inbox.get(i).date.compareTo(end) <= 0){
+            if(this.Inbox.get(i).getLeft().compareTo(start) >=0 && this.Inbox.get(i).getLeft().compareTo(end) <= 0){
                 count++;
             }
         }

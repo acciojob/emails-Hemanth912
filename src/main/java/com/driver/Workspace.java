@@ -23,20 +23,20 @@ public class Workspace extends Gmail{
         ArrayList<Pair<LocalTime, Integer>> endTimes = new ArrayList();
 
         for(int i = 0; i < this.calendar.size(); i++) {
-            endTimes.add(Pair.of(((Meeting)this.calendar.get(i)).getEndTime(), i));
+            endTimes.add(Pair.of(this.calendar.get(i).getEndTime(), i));
         }
         Collections.sort(endTimes);
 
-        LocalTime time_limit = (LocalTime)((Pair)endTimes.get(0)).getLeft();
+        LocalTime time_limit = endTimes.get(0).getLeft();
         int count = 0;
         if (!endTimes.isEmpty()) {
             count++;
         }
 
         for(int i = 1; i < endTimes.size(); ++i) {
-            if (((Meeting)this.calendar.get((Integer)((Pair)endTimes.get(i)).getRight())).getStartTime().compareTo(time_limit) > 0) {
+            if (this.calendar.get(endTimes.get(i).getRight()).getStartTime().compareTo(time_limit) > 0) {
                 count++;
-                time_limit = (LocalTime)((Pair)endTimes.get(i)).getLeft();
+                time_limit = endTimes.get(i).getLeft();
             }
         }
 
